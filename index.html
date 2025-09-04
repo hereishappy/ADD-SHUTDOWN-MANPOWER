@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Entry App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-up {
+            animation: slideUp 0.4s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Login Card -->
+        <div id="loginCard" class="bg-white rounded-2xl shadow-xl p-8 fade-in">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">Data Entry Portal</h1>
+                <p class="text-gray-600 mt-2">Enter your password to continue</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="passwordInput" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                           placeholder="Enter password" required>
+                </div>
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                    Login
+                </button>
+            </form>
+            <div id="loginError" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm"></div>
+        </div>
+
+        <!-- Selection Card -->
+        <div id="selectionCard" class="hidden bg-white rounded-2xl shadow-xl p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">Select Category</h2>
+                <p class="text-gray-600 mt-2">Choose what you want to manage</p>
+            </div>
+            
+            <div class="space-y-4">
+                <button id="workforceBtn" 
+                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4 px-6 rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center space-x-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span>Workforce</span>
+                </button>
+                
+                <button id="staffBtn" 
+                        class="w-full bg-gradient-to-r from-purple-500 to-violet-600 text-white py-4 px-6 rounded-lg font-medium hover:from-purple-600 hover:to-violet-700 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center space-x-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <span>Staff</span>
+                </button>
+            </div>
+            
+            <button id="logoutBtn" 
+                    class="w-full mt-6 bg-gray-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-600 transition-all duration-200">
+                Logout
+            </button>
+        </div>
+
+        <!-- Workforce Entry Card -->
+        <div id="workforceCard" class="hidden bg-white rounded-2xl shadow-xl p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Workforce Entry</h2>
+                <button id="backFromWorkforce" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="workforceForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Employee Name</label>
+                    <input type="text" id="workforceName" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                           placeholder="Enter name (First letter capital)" required>
+                </div>
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                    Add Employee
+                </button>
+            </form>
+            
+            <div id="workforceSuccess" class="hidden mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm"></div>
+            <div id="workforceError" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm"></div>
+        </div>
+
+        <!-- Staff Entry Card -->
+        <div id="staffCard" class="hidden bg-white rounded-2xl shadow-xl p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Staff Entry</h2>
+                <button id="backFromStaff" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="staffForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Staff Name</label>
+                    <input type="text" id="staffName" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                           placeholder="Enter name (First letter capital)" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Passcode</label>
+                    <input type="text" id="staffPasscode" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                           placeholder="Enter passcode" required>
+                </div>
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-purple-500 to-violet-600 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-600 hover:to-violet-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                    Add Staff
+                </button>
+            </form>
+            
+            <div id="staffSuccess" class="hidden mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm"></div>
+            <div id="staffError" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CORRECT_PASSWORD = '119034';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxevLxUqBycwxEv7MW7ugHjWY4Z6i0eSwe9GBYPY14B5xkaTB9yLGWdPRjoG6gIFCC3w/exec';
+
+        // DOM Elements
+        const loginCard = document.getElementById('loginCard');
+        const selectionCard = document.getElementById('selectionCard');
+        const workforceCard = document.getElementById('workforceCard');
+        const staffCard = document.getElementById('staffCard');
+        const loginForm = document.getElementById('loginForm');
+        const workforceForm = document.getElementById('workforceForm');
+        const staffForm = document.getElementById('staffForm');
+
+        // Utility Functions
+        function showCard(card) {
+            document.querySelectorAll('[id$="Card"]').forEach(c => c.classList.add('hidden'));
+            card.classList.remove('hidden');
+            card.classList.add('slide-up');
+        }
+
+        function showMessage(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = isError ? 
+                'mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm' :
+                'mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm';
+            element.classList.remove('hidden');
+            setTimeout(() => element.classList.add('hidden'), 3000);
+        }
+
+        function formatName(name) {
+            return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+        }
+
+        async function sendToGoogleSheets(sheetName, data) {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sheet: sheetName,
+                        data: data
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                return result.success;
+            } catch (error) {
+                console.error('Error:', error);
+                return false;
+            }
+        }
+
+        // Event Listeners
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('passwordInput').value;
+            
+            if (password === CORRECT_PASSWORD) {
+                showCard(selectionCard);
+            } else {
+                showMessage('loginError', 'Incorrect password. Please try again.', true);
+            }
+        });
+
+        document.getElementById('workforceBtn').addEventListener('click', () => {
+            showCard(workforceCard);
+        });
+
+        document.getElementById('staffBtn').addEventListener('click', () => {
+            showCard(staffCard);
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            document.getElementById('passwordInput').value = '';
+            showCard(loginCard);
+        });
+
+        document.getElementById('backFromWorkforce').addEventListener('click', () => {
+            showCard(selectionCard);
+        });
+
+        document.getElementById('backFromStaff').addEventListener('click', () => {
+            showCard(selectionCard);
+        });
+
+        workforceForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = formatName(document.getElementById('workforceName').value.trim());
+            
+            if (name) {
+                const success = await sendToGoogleSheets('EMP LIST', [name]);
+                
+                if (success) {
+                    showMessage('workforceSuccess', `Employee "${name}" added successfully!`);
+                    document.getElementById('workforceName').value = '';
+                } else {
+                    showMessage('workforceError', 'Failed to add employee. Please try again.', true);
+                }
+            }
+        });
+
+        staffForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = formatName(document.getElementById('staffName').value.trim());
+            const passcode = document.getElementById('staffPasscode').value.trim();
+            
+            if (name && passcode) {
+                const success = await sendToGoogleSheets('CONFIG', [name, passcode]);
+                
+                if (success) {
+                    showMessage('staffSuccess', `Staff "${name}" added successfully!`);
+                    document.getElementById('staffName').value = '';
+                    document.getElementById('staffPasscode').value = '';
+                } else {
+                    showMessage('staffError', 'Failed to add staff. Please try again.', true);
+                }
+            }
+        });
+
+        // Auto-format name inputs
+        document.getElementById('workforceName').addEventListener('blur', (e) => {
+            e.target.value = formatName(e.target.value);
+        });
+
+        document.getElementById('staffName').addEventListener('blur', (e) => {
+            e.target.value = formatName(e.target.value);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979d781934eb2dfe',t:'MTc1Njk4ODcyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
