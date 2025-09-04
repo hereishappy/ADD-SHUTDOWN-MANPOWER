@@ -23,7 +23,12 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
+    <!-- Demo Mode Banner -->
+    <div id="demoBanner" class="fixed top-4 left-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-2 rounded-lg text-sm text-center z-50">
+        <strong>Demo Mode:</strong> Data submissions are simulated. Set up Google Apps Script to enable real functionality.
+    </div>
+
+    <div class="w-full max-w-md mt-16">
         <!-- Login Card -->
         <div id="loginCard" class="bg-white rounded-2xl shadow-xl p-8 fade-in">
             <div class="text-center mb-8">
@@ -148,7 +153,10 @@
     <script>
         // Configuration
         const CORRECT_PASSWORD = '119034';
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxevLxUqBycwxEv7MW7ugHjWY4Z6i0eSwe9GBYPY14B5xkaTB9yLGWdPRjoG6gIFCC3w/exec';
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+        
+        // Demo mode - set to false when you have your Google Apps Script URL
+        const DEMO_MODE = true;
 
         // DOM Elements
         const loginCard = document.getElementById('loginCard');
@@ -181,7 +189,19 @@
         }
 
         async function sendToGoogleSheets(sheetName, data) {
+            // Demo mode - simulate successful submission
+            if (DEMO_MODE) {
+                console.log(`Demo: Adding to ${sheetName}:`, data);
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+                return true;
+            }
+            
             try {
+                if (GOOGLE_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxxevLxUqBycwxEv7MW7ugHjWY4Z6i0eSwe9GBYPY14B5xkaTB9yLGWdPRjoG6gIFCC3w/exec') {
+                    throw new Error('Please update GOOGLE_SCRIPT_URL with your actual Google Apps Script URL');
+                }
+                
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     headers: {
@@ -280,6 +300,12 @@
         document.getElementById('staffName').addEventListener('blur', (e) => {
             e.target.value = formatName(e.target.value);
         });
+
+        // Hide demo banner if not in demo mode
+        if (!DEMO_MODE) {
+            document.getElementById('demoBanner').style.display = 'none';
+            document.querySelector('.w-full.max-w-md').classList.remove('mt-16');
+        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979d781934eb2dfe',t:'MTc1Njk4ODcyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979d88e961c73be0',t:'MTc1Njk4OTQxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
