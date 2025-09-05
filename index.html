@@ -13,7 +13,40 @@
     </style>
 </head>
 <body class="p-4">
-    <div class="max-w-md mx-auto space-y-6">
+    <!-- Password Protection Modal -->
+    <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm mx-4 w-full">
+            <div class="mb-6 text-center">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Access Required</h2>
+                <div class="w-12 h-1 bg-gray-500 rounded mx-auto"></div>
+            </div>
+            
+            <form id="passwordForm" class="space-y-4">
+                <div>
+                    <input 
+                        type="password" 
+                        id="accessPassword" 
+                        placeholder="Enter Access Code"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent outline-none transition-all"
+                        required
+                    >
+                </div>
+                
+                <button 
+                    type="submit"
+                    class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
+                >
+                    Access App
+                </button>
+            </form>
+            
+            <div id="passwordError" class="mt-4 text-sm text-center text-red-600 hidden">
+                Invalid access code. Please try again.
+            </div>
+        </div>
+    </div>
+
+    <div id="mainApp" class="max-w-md mx-auto space-y-6 hidden">
         <!-- Card 1: Add Employee -->
         <div class="bg-white rounded-xl shadow-lg p-6">
             <div class="mb-6">
@@ -83,70 +116,39 @@
             
             <div id="supervisorStatus" class="mt-4 text-sm text-center hidden"></div>
         </div>
-
-        <!-- Setup Instructions -->
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div class="text-sm text-blue-800">
-                <strong>Setup Instructions:</strong>
-                <ol class="mt-2 ml-4 list-decimal space-y-1">
-                    <li>Go to <a href="https://script.google.com" class="underline text-blue-600">script.google.com</a></li>
-                    <li>Create new project and paste the Google Apps Script code below</li>
-                    <li>Deploy as web app with "Anyone" access</li>
-                    <li>Copy the web app URL and update the SCRIPT_URL below</li>
-                </ol>
-            </div>
-        </div>
-
-        <!-- Google Apps Script Code -->
-        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-semibold text-gray-800">Google Apps Script Code</h3>
-                <button onclick="copyToClipboard('gasCode')" class="text-blue-600 hover:text-blue-800 text-sm">Copy</button>
-            </div>
-            <pre id="gasCode" class="text-xs bg-white p-3 rounded border overflow-x-auto"><code>function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    const sheetId = '1Cm1tisaD_dhRcmE5eO7_wf-OUnUVvhuH8mJrz_SAabo';
-    const ss = SpreadsheetApp.openById(sheetId);
-    
-    if (data.sheet === 'EMP LIST') {
-      const sheet = ss.getSheetByName('EMP LIST');
-      if (!sheet) {
-        const newSheet = ss.insertSheet('EMP LIST');
-        newSheet.getRange('A1').setValue('EMP NAME');
-      }
-      const targetSheet = ss.getSheetByName('EMP LIST');
-      const lastRow = targetSheet.getLastRow();
-      const nextRow = lastRow === 0 ? 2 : lastRow + 1;
-      targetSheet.getRange(nextRow, 1).setValue(data.values[0][0]);
-      
-    } else if (data.sheet === 'CONFIG') {
-      const sheet = ss.getSheetByName('CONFIG');
-      if (!sheet) {
-        const newSheet = ss.insertSheet('CONFIG');
-        newSheet.getRange('A1').setValue('Supervisor Name');
-        newSheet.getRange('B1').setValue('Password');
-      }
-      const targetSheet = ss.getSheetByName('CONFIG');
-      const lastRow = targetSheet.getLastRow();
-      const nextRow = lastRow === 0 ? 2 : lastRow + 1;
-      targetSheet.getRange(nextRow, 1, 1, 2).setValues([data.values[0]]);
-    }
-    
-    return ContentService
-      .createTextOutput(JSON.stringify({success: true}))
-      .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch (error) {
-    return ContentService
-      .createTextOutput(JSON.stringify({success: false, error: error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}</code></pre>
-        </div>
     </div>
 
     <script>
+        // Password protection
+        const ACCESS_CODE = '119034';
+        
+        // Check if user is already authenticated
+        if (sessionStorage.getItem('authenticated') === 'true') {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('mainApp').classList.remove('hidden');
+        }
+
+        // Password form handler
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const enteredPassword = document.getElementById('accessPassword').value;
+            const errorDiv = document.getElementById('passwordError');
+            
+            if (enteredPassword === ACCESS_CODE) {
+                // Correct password
+                sessionStorage.setItem('authenticated', 'true');
+                document.getElementById('passwordModal').style.display = 'none';
+                document.getElementById('mainApp').classList.remove('hidden');
+                errorDiv.classList.add('hidden');
+            } else {
+                // Wrong password
+                errorDiv.classList.remove('hidden');
+                document.getElementById('accessPassword').value = '';
+                document.getElementById('accessPassword').focus();
+            }
+        });
+
         // Google Sheet configuration
         const SHEET_CONFIG = {
             sheetId: '1Cm1tisaD_dhRcmE5eO7_wf-OUnUVvhuH8mJrz_SAabo',
@@ -176,14 +178,12 @@
             submitBtn.disabled = true;
 
             try {
-                // In a real implementation, this would call your Google Apps Script web app
                 const data = {
                     sheet: SHEET_CONFIG.employeeSheet,
                     values: [[employeeName]],
-                    range: 'A2' // Starting from A2 as requested
+                    range: 'A2'
                 };
 
-                // Call Google Apps Script
                 await callGoogleScript(data);
                 
                 showStatus(statusDiv, `Employee "${employeeName}" added successfully!`, 'success');
@@ -223,14 +223,12 @@
             submitBtn.disabled = true;
 
             try {
-                // In a real implementation, this would call your Google Apps Script web app
                 const data = {
                     sheet: SHEET_CONFIG.configSheet,
                     values: [[supervisorName, password]],
-                    range: 'A:B' // Supervisor Name | Password columns
+                    range: 'A:B'
                 };
 
-                // Call Google Apps Script
                 await callGoogleScript(data);
                 
                 showStatus(statusDiv, `Supervisor "${supervisorName}" added successfully!`, 'success');
@@ -258,8 +256,14 @@
         }
 
         async function callGoogleScript(data) {
-            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwT3RMC0uc4QCFcUd1YXPnaLCFugycdeQdt29DgJxRvHkSZisL9jeA28kx2bOE1122IVQ/exec') {
-                throw new Error('Please update SCRIPT_URL with your Google Apps Script web app URL');
+            if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+                // Simulate success for demo
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        console.log('Demo mode - Data would be sent:', data);
+                        resolve({ success: true });
+                    }, 1000);
+                });
             }
 
             const response = await fetch(SCRIPT_URL, {
@@ -284,31 +288,8 @@
 
         // Password input validation
         document.getElementById('supervisorPassword').addEventListener('input', function(e) {
-            // Only allow numeric input
             this.value = this.value.replace(/[^0-9]/g, '');
         });
-
-        // Copy to clipboard function
-        function copyToClipboard(elementId) {
-            const element = document.getElementById(elementId);
-            const text = element.textContent;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                // Show temporary feedback
-                const button = event.target;
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.className = button.className.replace('text-blue-600', 'text-green-600');
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.className = button.className.replace('text-green-600', 'text-blue-600');
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                alert('Failed to copy to clipboard');
-            });
-        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a5574ba61dc464',t:'MTc1NzA3MTI2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a5656564dbc464',t:'MTc1NzA3MTg0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
