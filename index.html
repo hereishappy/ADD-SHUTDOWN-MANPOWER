@@ -157,7 +157,7 @@
         };
 
         // Google Apps Script web app URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwT3RMC0uc4QCFcUd1YXPnaLCFugycdeQdt29DgJxRvHkSZisL9jeA28kx2bOE1122IVQ/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpja255N3Y0dBBz32gAoYSRRloI6F1pReyJTLP290cbvsHcG5OhtW63qSA8_uqTuZi-w/exec';
 
         // Employee form handler
         document.getElementById('employeeForm').addEventListener('submit', async function(e) {
@@ -256,18 +256,15 @@
         }
 
         async function callGoogleScript(data) {
-            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwT3RMC0uc4QCFcUd1YXPnaLCFugycdeQdt29DgJxRvHkSZisL9jeA28kx2bOE1122IVQ/exec') {
-                throw new Error('Please update SCRIPT_URL with your Google Apps Script deployment URL. Go to script.google.com, deploy as web app, and paste the URL here.');
-            }
-
             try {
+                // Use FormData for Google Apps Script compatibility
+                const formData = new FormData();
+                formData.append('data', JSON.stringify(data));
+
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
+                    body: formData,
+                    redirect: 'follow'
                 });
 
                 if (!response.ok) {
@@ -275,14 +272,23 @@
                 }
 
                 const result = await response.json();
-                if (!result.success) {
+                
+                if (result.success === false) {
                     throw new Error(result.error || 'Unknown error occurred');
                 }
 
                 return result;
             } catch (error) {
                 console.error('Error calling Google Script:', error);
-                throw error;
+                
+                // More detailed error information
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    throw new Error('Network error - check your internet connection');
+                } else if (error.message.includes('CORS')) {
+                    throw new Error('CORS error - check Google Apps Script deployment settings');
+                } else {
+                    throw new Error(`Connection failed: ${error.message}`);
+                }
             }
         }
 
@@ -291,5 +297,5 @@
             this.value = this.value.replace(/[^0-9]/g, '');
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a570c6674fc464',t:'MTc1NzA3MjMwOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a5767fb68dc464',t:'MTc1NzA3MjU0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
