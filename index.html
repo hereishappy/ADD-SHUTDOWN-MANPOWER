@@ -156,7 +156,7 @@
             configSheet: 'CONFIG'
         };
 
-        // Replace this with your Google Apps Script web app URL after deployment
+        // Google Apps Script web app URL
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwT3RMC0uc4QCFcUd1YXPnaLCFugycdeQdt29DgJxRvHkSZisL9jeA28kx2bOE1122IVQ/exec';
 
         // Employee form handler
@@ -256,34 +256,34 @@
         }
 
         async function callGoogleScript(data) {
-            if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
-                // Simulate success for demo
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        console.log('Demo mode - Data would be sent:', data);
-                        resolve({ success: true });
-                    }, 1000);
+            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwT3RMC0uc4QCFcUd1YXPnaLCFugycdeQdt29DgJxRvHkSZisL9jeA28kx2bOE1122IVQ/exec') {
+                throw new Error('Please update SCRIPT_URL with your Google Apps Script deployment URL. Go to script.google.com, deploy as web app, and paste the URL here.');
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
                 });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error(result.error || 'Unknown error occurred');
+                }
+
+                return result;
+            } catch (error) {
+                console.error('Error calling Google Script:', error);
+                throw error;
             }
-
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            if (!result.success) {
-                throw new Error(result.error || 'Unknown error occurred');
-            }
-
-            return result;
         }
 
         // Password input validation
@@ -291,5 +291,5 @@
             this.value = this.value.replace(/[^0-9]/g, '');
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a5656564dbc464',t:'MTc1NzA3MTg0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a570c6674fc464',t:'MTc1NzA3MjMwOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
