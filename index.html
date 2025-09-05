@@ -3,309 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Entry App</title>
+    <title>Employee Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .slide-up {
-            animation: slideUp 0.4s ease-out;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
-    <!-- Demo Mode Banner -->
-    <div id="demoBanner" class="fixed top-4 left-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-2 rounded-lg text-sm text-center z-50">
-        <strong>Demo Mode:</strong> Data submissions are simulated. Set up Google Apps Script to enable real functionality.
-    </div>
-
-    <div class="w-full max-w-md mt-16">
-        <!-- Login Card -->
-        <div id="loginCard" class="bg-white rounded-2xl shadow-xl p-8 fade-in">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                    </svg>
-                </div>
-                <h1 class="text-2xl font-bold text-gray-800">Data Entry Portal</h1>
-                <p class="text-gray-600 mt-2">Enter your password to continue</p>
+<body class="p-4">
+    <div class="max-w-md mx-auto space-y-6">
+        <!-- Card 1: Add Employee -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Add Employee</h2>
+                <div class="w-12 h-1 bg-blue-500 rounded"></div>
             </div>
             
-            <form id="loginForm" class="space-y-6">
+            <form id="employeeForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                    <input type="password" id="passwordInput" 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                           placeholder="Enter password" required>
+                    <input 
+                        type="text" 
+                        id="employeeName" 
+                        placeholder="Employee Name"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                        required
+                    >
                 </div>
-                <button type="submit" 
-                        class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                    Login
-                </button>
-            </form>
-            <div id="loginError" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm"></div>
-        </div>
-
-        <!-- Selection Card -->
-        <div id="selectionCard" class="hidden bg-white rounded-2xl shadow-xl p-8">
-            <div class="text-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-800">Select Category</h2>
-                <p class="text-gray-600 mt-2">Choose what you want to manage</p>
-            </div>
-            
-            <div class="space-y-4">
-                <button id="workforceBtn" 
-                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4 px-6 rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center space-x-3">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                    <span>Workforce</span>
-                </button>
                 
-                <button id="staffBtn" 
-                        class="w-full bg-gradient-to-r from-purple-500 to-violet-600 text-white py-4 px-6 rounded-lg font-medium hover:from-purple-600 hover:to-violet-700 transform hover:scale-105 transition-all duration-200 shadow-lg flex items-center justify-center space-x-3">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                    <span>Staff</span>
-                </button>
-            </div>
-            
-            <button id="logoutBtn" 
-                    class="w-full mt-6 bg-gray-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-600 transition-all duration-200">
-                Logout
-            </button>
-        </div>
-
-        <!-- Workforce Entry Card -->
-        <div id="workforceCard" class="hidden bg-white rounded-2xl shadow-xl p-8">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Workforce Entry</h2>
-                <button id="backFromWorkforce" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                </button>
-            </div>
-            
-            <form id="workforceForm" class="space-y-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Employee Name</label>
-                    <input type="text" id="workforceName" 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                           placeholder="Enter name (First letter capital)" required>
-                </div>
-                <button type="submit" 
-                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                <button 
+                    type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-[1.02]"
+                >
                     Add Employee
                 </button>
             </form>
             
-            <div id="workforceSuccess" class="hidden mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm"></div>
-            <div id="workforceError" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm"></div>
+            <div id="employeeStatus" class="mt-4 text-sm text-center hidden"></div>
         </div>
 
-        <!-- Staff Entry Card -->
-        <div id="staffCard" class="hidden bg-white rounded-2xl shadow-xl p-8">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Staff Entry</h2>
-                <button id="backFromStaff" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                </button>
+        <!-- Card 2: Add Supervisor -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Add Supervisor</h2>
+                <div class="w-12 h-1 bg-purple-500 rounded"></div>
             </div>
             
-            <form id="staffForm" class="space-y-6">
+            <form id="supervisorForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Staff Name</label>
-                    <input type="text" id="staffName" 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                           placeholder="Enter name (First letter capital)" required>
+                    <input 
+                        type="text" 
+                        id="supervisorName" 
+                        placeholder="Supervisor Name"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                        required
+                    >
                 </div>
+                
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Passcode</label>
-                    <input type="text" id="staffPasscode" 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                           placeholder="Enter passcode" required>
+                    <input 
+                        type="password" 
+                        id="supervisorPassword" 
+                        placeholder="4-Digit Password"
+                        maxlength="4"
+                        pattern="[0-9]{4}"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                        required
+                    >
                 </div>
-                <button type="submit" 
-                        class="w-full bg-gradient-to-r from-purple-500 to-violet-600 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-600 hover:to-violet-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                    Add Staff
+                
+                <button 
+                    type="submit"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-[1.02]"
+                >
+                    Add Supervisor
                 </button>
             </form>
             
-            <div id="staffSuccess" class="hidden mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm"></div>
-            <div id="staffError" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm"></div>
+            <div id="supervisorStatus" class="mt-4 text-sm text-center hidden"></div>
+        </div>
+
+        <!-- Setup Instructions -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="text-sm text-blue-800">
+                <strong>Setup Instructions:</strong>
+                <ol class="mt-2 ml-4 list-decimal space-y-1">
+                    <li>Go to <a href="https://script.google.com" class="underline text-blue-600">script.google.com</a></li>
+                    <li>Create new project and paste the Google Apps Script code below</li>
+                    <li>Deploy as web app with "Anyone" access</li>
+                    <li>Copy the web app URL and update the SCRIPT_URL below</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Google Apps Script Code -->
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-semibold text-gray-800">Google Apps Script Code</h3>
+                <button onclick="copyToClipboard('gasCode')" class="text-blue-600 hover:text-blue-800 text-sm">Copy</button>
+            </div>
+            <pre id="gasCode" class="text-xs bg-white p-3 rounded border overflow-x-auto"><code>function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const sheetId = '1Cm1tisaD_dhRcmE5eO7_wf-OUnUVvhuH8mJrz_SAabo';
+    const ss = SpreadsheetApp.openById(sheetId);
+    
+    if (data.sheet === 'EMP LIST') {
+      const sheet = ss.getSheetByName('EMP LIST');
+      if (!sheet) {
+        const newSheet = ss.insertSheet('EMP LIST');
+        newSheet.getRange('A1').setValue('EMP NAME');
+      }
+      const targetSheet = ss.getSheetByName('EMP LIST');
+      const lastRow = targetSheet.getLastRow();
+      const nextRow = lastRow === 0 ? 2 : lastRow + 1;
+      targetSheet.getRange(nextRow, 1).setValue(data.values[0][0]);
+      
+    } else if (data.sheet === 'CONFIG') {
+      const sheet = ss.getSheetByName('CONFIG');
+      if (!sheet) {
+        const newSheet = ss.insertSheet('CONFIG');
+        newSheet.getRange('A1').setValue('Supervisor Name');
+        newSheet.getRange('B1').setValue('Password');
+      }
+      const targetSheet = ss.getSheetByName('CONFIG');
+      const lastRow = targetSheet.getLastRow();
+      const nextRow = lastRow === 0 ? 2 : lastRow + 1;
+      targetSheet.getRange(nextRow, 1, 1, 2).setValues([data.values[0]]);
+    }
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({success: true}))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, error: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</code></pre>
         </div>
     </div>
 
     <script>
-        // Configuration
-        const CORRECT_PASSWORD = '119034';
-        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
-        
-        // Demo mode - set to false when you have your Google Apps Script URL
-        const DEMO_MODE = true;
+        // Google Sheet configuration
+        const SHEET_CONFIG = {
+            sheetId: '1Cm1tisaD_dhRcmE5eO7_wf-OUnUVvhuH8mJrz_SAabo',
+            employeeSheet: 'EMP LIST',
+            configSheet: 'CONFIG'
+        };
 
-        // DOM Elements
-        const loginCard = document.getElementById('loginCard');
-        const selectionCard = document.getElementById('selectionCard');
-        const workforceCard = document.getElementById('workforceCard');
-        const staffCard = document.getElementById('staffCard');
-        const loginForm = document.getElementById('loginForm');
-        const workforceForm = document.getElementById('workforceForm');
-        const staffForm = document.getElementById('staffForm');
+        // Replace this with your Google Apps Script web app URL after deployment
+        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
-        // Utility Functions
-        function showCard(card) {
-            document.querySelectorAll('[id$="Card"]').forEach(c => c.classList.add('hidden'));
-            card.classList.remove('hidden');
-            card.classList.add('slide-up');
-        }
-
-        function showMessage(elementId, message, isError = false) {
-            const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.className = isError ? 
-                'mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm' :
-                'mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm';
-            element.classList.remove('hidden');
-            setTimeout(() => element.classList.add('hidden'), 3000);
-        }
-
-        function formatName(name) {
-            return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-        }
-
-        async function sendToGoogleSheets(sheetName, data) {
-            // Demo mode - simulate successful submission
-            if (DEMO_MODE) {
-                console.log(`Demo: Adding to ${sheetName}:`, data);
-                // Simulate network delay
-                await new Promise(resolve => setTimeout(resolve, 500));
-                return true;
-            }
+        // Employee form handler
+        document.getElementById('employeeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
             
+            const employeeName = document.getElementById('employeeName').value.trim();
+            const statusDiv = document.getElementById('employeeStatus');
+            
+            if (!employeeName) {
+                showStatus(statusDiv, 'Please enter an employee name', 'error');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Adding...';
+            submitBtn.disabled = true;
+
             try {
-                if (GOOGLE_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxxevLxUqBycwxEv7MW7ugHjWY4Z6i0eSwe9GBYPY14B5xkaTB9yLGWdPRjoG6gIFCC3w/exec') {
-                    throw new Error('Please update GOOGLE_SCRIPT_URL with your actual Google Apps Script URL');
-                }
+                // In a real implementation, this would call your Google Apps Script web app
+                const data = {
+                    sheet: SHEET_CONFIG.employeeSheet,
+                    values: [[employeeName]],
+                    range: 'A2' // Starting from A2 as requested
+                };
+
+                // Call Google Apps Script
+                await callGoogleScript(data);
                 
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        sheet: sheetName,
-                        data: data
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const result = await response.json();
-                return result.success;
+                showStatus(statusDiv, `Employee "${employeeName}" added successfully!`, 'success');
+                document.getElementById('employeeName').value = '';
+                
             } catch (error) {
+                showStatus(statusDiv, 'Error adding employee. Please try again.', 'error');
                 console.error('Error:', error);
-                return false;
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
+        });
+
+        // Supervisor form handler
+        document.getElementById('supervisorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const supervisorName = document.getElementById('supervisorName').value.trim();
+            const password = document.getElementById('supervisorPassword').value;
+            const statusDiv = document.getElementById('supervisorStatus');
+            
+            if (!supervisorName || !password) {
+                showStatus(statusDiv, 'Please fill in all fields', 'error');
+                return;
+            }
+
+            if (!/^\d{4}$/.test(password)) {
+                showStatus(statusDiv, 'Password must be exactly 4 digits', 'error');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Adding...';
+            submitBtn.disabled = true;
+
+            try {
+                // In a real implementation, this would call your Google Apps Script web app
+                const data = {
+                    sheet: SHEET_CONFIG.configSheet,
+                    values: [[supervisorName, password]],
+                    range: 'A:B' // Supervisor Name | Password columns
+                };
+
+                // Call Google Apps Script
+                await callGoogleScript(data);
+                
+                showStatus(statusDiv, `Supervisor "${supervisorName}" added successfully!`, 'success');
+                document.getElementById('supervisorName').value = '';
+                document.getElementById('supervisorPassword').value = '';
+                
+            } catch (error) {
+                showStatus(statusDiv, 'Error adding supervisor. Please try again.', 'error');
+                console.error('Error:', error);
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Utility functions
+        function showStatus(element, message, type) {
+            element.textContent = message;
+            element.className = `mt-4 text-sm text-center ${type === 'success' ? 'text-green-600' : 'text-red-600'}`;
+            element.classList.remove('hidden');
+            
+            setTimeout(() => {
+                element.classList.add('hidden');
+            }, 3000);
         }
 
-        // Event Listeners
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const password = document.getElementById('passwordInput').value;
-            
-            if (password === CORRECT_PASSWORD) {
-                showCard(selectionCard);
-            } else {
-                showMessage('loginError', 'Incorrect password. Please try again.', true);
+        async function callGoogleScript(data) {
+            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwT3RMC0uc4QCFcUd1YXPnaLCFugycdeQdt29DgJxRvHkSZisL9jeA28kx2bOE1122IVQ/exec') {
+                throw new Error('Please update SCRIPT_URL with your Google Apps Script web app URL');
             }
+
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error || 'Unknown error occurred');
+            }
+
+            return result;
+        }
+
+        // Password input validation
+        document.getElementById('supervisorPassword').addEventListener('input', function(e) {
+            // Only allow numeric input
+            this.value = this.value.replace(/[^0-9]/g, '');
         });
 
-        document.getElementById('workforceBtn').addEventListener('click', () => {
-            showCard(workforceCard);
-        });
-
-        document.getElementById('staffBtn').addEventListener('click', () => {
-            showCard(staffCard);
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            document.getElementById('passwordInput').value = '';
-            showCard(loginCard);
-        });
-
-        document.getElementById('backFromWorkforce').addEventListener('click', () => {
-            showCard(selectionCard);
-        });
-
-        document.getElementById('backFromStaff').addEventListener('click', () => {
-            showCard(selectionCard);
-        });
-
-        workforceForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = formatName(document.getElementById('workforceName').value.trim());
+        // Copy to clipboard function
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
             
-            if (name) {
-                const success = await sendToGoogleSheets('EMP LIST', [name]);
+            navigator.clipboard.writeText(text).then(() => {
+                // Show temporary feedback
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.className = button.className.replace('text-blue-600', 'text-green-600');
                 
-                if (success) {
-                    showMessage('workforceSuccess', `Employee "${name}" added successfully!`);
-                    document.getElementById('workforceName').value = '';
-                } else {
-                    showMessage('workforceError', 'Failed to add employee. Please try again.', true);
-                }
-            }
-        });
-
-        staffForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = formatName(document.getElementById('staffName').value.trim());
-            const passcode = document.getElementById('staffPasscode').value.trim();
-            
-            if (name && passcode) {
-                const success = await sendToGoogleSheets('CONFIG', [name, passcode]);
-                
-                if (success) {
-                    showMessage('staffSuccess', `Staff "${name}" added successfully!`);
-                    document.getElementById('staffName').value = '';
-                    document.getElementById('staffPasscode').value = '';
-                } else {
-                    showMessage('staffError', 'Failed to add staff. Please try again.', true);
-                }
-            }
-        });
-
-        // Auto-format name inputs
-        document.getElementById('workforceName').addEventListener('blur', (e) => {
-            e.target.value = formatName(e.target.value);
-        });
-
-        document.getElementById('staffName').addEventListener('blur', (e) => {
-            e.target.value = formatName(e.target.value);
-        });
-
-        // Hide demo banner if not in demo mode
-        if (!DEMO_MODE) {
-            document.getElementById('demoBanner').style.display = 'none';
-            document.querySelector('.w-full.max-w-md').classList.remove('mt-16');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.className = button.className.replace('text-green-600', 'text-blue-600');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy to clipboard');
+            });
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979d88e961c73be0',t:'MTc1Njk4OTQxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a5574ba61dc464',t:'MTc1NzA3MTI2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
